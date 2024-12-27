@@ -1,4 +1,4 @@
-crud/venv/*
-crud/__pycache__/*
+kp/venv/*
+kp/__pycache__/*
 ml/__pycache__/*
 ml/venv/*

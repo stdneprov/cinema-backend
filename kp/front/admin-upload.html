@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Database - Admin Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .upload-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        #logout {
+            background-color: #dc3545;
+        }
+        #logout:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <h1>Admin Panel</h1>
+        <button id="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="upload-section">
+        <h2>Upload New Movie</h2>
+        <input type="text" id="title" placeholder="Title">
+        <textarea id="description" placeholder="Description"></textarea>
+        <input type="text" id="actors" placeholder="Actors">
+        <input type="text" id="genre" placeholder="Genre">
+        <input type="number" id="year" placeholder="Year of Creation">
+        <input type="file" id="movieFile" accept="video/*">
+        <button onclick="uploadMovie()">Upload Movie</button>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1:8000';
+        
+        // Check authentication
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = 'login.html';
+        }
+
+        async function uploadMovie() {
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('actors', document.getElementById('actors').value);
+            formData.append('genre', document.getElementById('genre').value);
+            formData.append('year_of_creation', document.getElementById('year').value);
+            formData.append('file', document.getElementById('movieFile').files[0]);
+
+            try {
+                const response = await fetch(`${BASE_URL}/api/movies`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Movie uploaded successfully!');
+                    // Clear form
+                    document.querySelectorAll('input, textarea').forEach(input => input.value = '');
+                }
+            } catch (error) {
+                alert('Upload failed!');
+            }
+        }
+    </script>
+</body>
+</html>

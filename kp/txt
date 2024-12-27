@@ -1,0 +1,13 @@
+CREATE OR REPLACE VIEW full_movies_info AS
+SELECT 
+    m.*,
+    CASE 
+        WHEN (COALESCE(COUNT(r.rate), 0) + COALESCE(m.fake_quantity, 0)) = 0 THEN 0
+        ELSE (COALESCE(SUM(r.rate), 0) + COALESCE(m.fake_rating, 0)) / (COALESCE(COUNT(r.rate), 0) + COALESCE(m.fake_quantity, 0))
+    END AS rating
+FROM 
+    movies m
+LEFT JOIN 
+    ratings r ON m.id = r.movie_id
+GROUP BY 
+    m.id;
