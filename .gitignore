@@ -1,0 +1,4 @@
+crud/venv/*
+crud/__pycache__/*
+ml/__pycache__/*
+ml/venv/*
